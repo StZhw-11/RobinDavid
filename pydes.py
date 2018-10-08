@@ -227,7 +227,28 @@ class des():
     
     def decrypt(self, key, text, padding=False):
         return self.run(key, text, DECRYPT, padding)
-    
+
+#      implimentation for string of any length encryption 
+def encrypt(key, text):
+    fill = 0 #initial fill is zero
+    if len(text)%8!=0: #if length is multiple of 8
+        fill = 8-len(text)%8 # how many zero(garbage value) going to add
+        for i in range(fill):
+            text += '0' #filling '0' to make it multiple of 8
+    text += '0000000'+str(fill) #Writing how many '0' added
+    d = des()
+    r = d.encrypt(key, text)
+    return r
+
+#      implimentation for string of any length decryption 
+def decrypt(key, text):
+    d = des()
+    r2 = d.decrypt(key,text)
+    trim = int(r2[-8:])+8 #grtting how many '0's are added
+    r2 = r2[:-trim] # removing '0'
+    return r2
+
+
 if __name__ == '__main__':
     key = "secret_k"
     text= "Hello wo"
@@ -236,3 +257,10 @@ if __name__ == '__main__':
     r2 = d.decrypt(key,r)
     print "Ciphered: %r" % r
     print "Deciphered: ", r2
+
+
+#       For string of any lenght
+    key = "12345678"
+    text= "Hello woHello woHello woHello woHello woHello woffrf1"
+    print("Ciphered: ", encrypt(key, text))
+    print("Deciphered: ", decrypt(key, encrypt(key, text)))
